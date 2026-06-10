@@ -1,0 +1,24 @@
+/* globals.css — global styles loaded on every page of the app */
+
+@import "tailwindcss"; /* pulls in all of Tailwind's utility classes */
+
+/* ── DESIGN SYSTEM COLORS ──
+   These are the official brand colors from CLAUDE.md.
+   Defining them inside @theme creates Tailwind classes like bg-brand, text-ink, etc. */
+@theme {
+  --color-page: #FFFFFF;        /* white base — main page background */
+  --color-card: #F8FAFB;        /* slightly off-white — cards and panels */
+  --color-brand: #4CAF82;       /* soft green — main buttons and accents */
+  --color-brand-dark: #3D9A6F;  /* slightly darker green — button hover state */
+  --color-accent: #5BAFD6;      /* light blue — highlights and links */
+  --color-ink: #1A1A2E;         /* near-black — main readable text */
+  --color-muted: #6B7280;       /* gray — secondary labels and timestamps */
+  --color-line: #E5E7EB;        /* light gray — card outlines and dividers */
+  --color-newclient: #FCD34D;   /* yellow — highlights NEW clients on the calendar */
+}
+
+/* base page styles — applied to the whole document */
+body {
+  background-color: #FFFFFF; /* light mode only — never dark */
+  color: #1A1A2E;            /* default text color is our near-black */
+}
