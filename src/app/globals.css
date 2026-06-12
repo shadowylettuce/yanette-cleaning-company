@@ -34,10 +34,6 @@ body {
   animation: marquee-scroll 45s linear infinite; /* slow steady scroll across all 10 cards */
 }
 
-.marquee-viewport:hover .marquee-track {
-  animation-play-state: paused; /* let visitors pause and read a card by hovering */
-}
-
 @media (prefers-reduced-motion: reduce) {
   .marquee-track {
     animation: none;              /* no motion for users who prefer reduced movement */

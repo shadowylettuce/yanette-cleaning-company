@@ -7,6 +7,7 @@
 // HARD RULE: clients with fewer than 4 completed cleanings get a YELLOW background (new client).
 
 import { useState, useEffect } from 'react'  // React tools for state and side effects
+import Link from 'next/link'                 // for the "Import Calendar" button in the header
 import { supabase } from '@/lib/supabase'    // our shared database connection
 import { useUser } from '@/lib/useUser'      // who is logged in + their business + language
 
@@ -116,6 +117,10 @@ export default function CalendarPage() {
           {t.monthNames[viewMonth]} {viewYear} {/* e.g. "June 2026" or "Junio 2026" */}
         </h1>
         <div className="flex gap-2">
+          {/* jump to the Google Calendar import page */}
+          <Link href="/dashboard/import" className="rounded-lg border border-line px-4 py-2 text-sm hover:bg-card">
+            {t.importCalendar}
+          </Link>
           <button onClick={goToPrevMonth} className="rounded-lg border border-line px-4 py-2 hover:bg-card">←</button>
           <button onClick={goToNextMonth} className="rounded-lg border border-line px-4 py-2 hover:bg-card">→</button>
         </div>

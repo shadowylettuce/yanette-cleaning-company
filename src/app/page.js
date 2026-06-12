@@ -124,7 +124,7 @@ export default function LandingPage() {
       {/* ── TESTIMONIALS ── */}
       <section className="bg-card px-6 py-20">
         <h2 className="text-center text-3xl font-bold">{t.testimonialsTitle}</h2>
-        {/* overflow-hidden viewport clips the scrolling row; hover pauses via CSS in globals.css */}
+        {/* overflow-hidden viewport clips the scrolling row so cards slide in from the side */}
         <div className="marquee-viewport mx-auto mt-10 max-w-6xl overflow-hidden">
           {/* flex row of cards — duplicated list animates left in an infinite loop */}
           <div className="marquee-track flex w-max gap-6">

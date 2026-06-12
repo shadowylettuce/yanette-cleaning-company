@@ -24,6 +24,7 @@ export default function DashboardLayout({ children }) { // children = whichever 
     { href: '/dashboard/payroll', label: t.payroll },
     { href: '/dashboard/payments', label: t.payments },
     { href: '/dashboard/reminders', label: t.reminders },
+    { href: '/dashboard/import', label: t.importCalendar }, // brings Google Calendar events into the app
   ]
 
   // ─── HANDLERS ───

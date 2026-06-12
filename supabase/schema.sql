@@ -151,3 +151,13 @@ create policy "logged-in users full access" on appointment_workers for all to au
 create policy "logged-in users full access" on timesheets for all to authenticated using (true) with check (true);
 create policy "logged-in users full access" on payments for all to authenticated using (true) with check (true);
 create policy "logged-in users full access" on reschedule_requests for all to authenticated using (true) with check (true);
+
+-- ─────────────────────────── GOOGLE CALENDAR IMPORT (addition) ───────────────────────────
+-- If you already ran the big script above, paste ONLY this section into the SQL Editor and click "Run".
+-- It remembers which Google Calendar event each imported appointment came from,
+-- so re-importing the same .ics file skips rows that already exist instead of duplicating them.
+alter table appointments add column if not exists google_event_uid text;
+
+-- speeds up the "have we already imported this event on this date?" lookup
+create index if not exists idx_appointments_google_uid
+  on appointments (business_id, google_event_uid, date);
