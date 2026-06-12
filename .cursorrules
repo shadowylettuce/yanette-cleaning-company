@@ -1,0 +1,217 @@
+# Cursor Rules — Yanette's House Cleaning Company
+
+> Read this entire file before touching any file. Every decision here is deliberate.
+
+---
+
+## What This Project Is
+
+A fully custom website and business management app for **Yanette's House Cleaning Company**, a house cleaning business in the Bay Area.
+
+- **Real product:** Yanette uses it day to day to run her business
+- **Portfolio demo:** The developer (Carlos) uses it when pitching similar builds to other cleaning companies
+- **First customer:** ~50 recurring clients, ~5 workers
+
+The code is private. Not a template to distribute or clone.
+
+---
+
+## Stack
+
+- **Framework:** Next.js App Router — JavaScript only, no TypeScript
+- **Auth + Database:** Supabase
+- **Styles:** Tailwind CSS
+- **Deployment:** Vercel
+- **Supabase client lives at:** `src/lib/supabase.js`
+
+```js
+import { supabase } from "@/lib/supabase" // always import the client this way
+```
+
+---
+
+## THE MOST IMPORTANT RULE — Inline Comments on Every Line
+
+**Every non-trivial line of code must have an inline comment explaining what it does in plain English.**
+
+Carlos is actively learning to code. Every file should read top to bottom like a book — no line should be a mystery.
+
+**This is what it should look like:**
+
+```js
+const [appointments, setAppointments] = useState([]) // appointments holds the list of bookings; starts as an empty array
+
+useEffect(() => {                          // useEffect runs this block of code after the page first loads
+  fetchAppointments()                      // call our function that goes and gets appointments from the database
+}, [])                                     // the empty array means: only run this once, when the component first mounts
+
+const { data, error } = await supabase     // send a request to Supabase; it gives back { data, error }
+  .from('appointments')                    // look inside the appointments table
+  .select('*, clients(name, address)')     // get all columns, and also pull name + address from the related clients table
+  .eq('business_id', businessId)           // filter: only return rows where business_id matches our business
+  .order('date', { ascending: true })      // sort the results by date, oldest first
+
+if (error) {                               // if Supabase returned an error instead of data
+  console.error('Failed to load appointments:', error) // print the error to the browser console so we can debug it
+  return                                   // exit early — do not try to use the broken data below
+}
+```
+
+**Comment every:**
+- `useState` declaration
+- `useEffect`
+- Supabase query line
+- `if` statement, ternary, or `&&` conditional
+- Function definition
+- Tailwind `className` with more than 3 classes (add a comment on the line above describing the element)
+
+Do not comment completely obvious things like a lone `return` at the end of a component. Use judgment — but when in doubt, write the comment.
+
+---
+
+## Code Style — Enforce on Every File
+
+**First line of every component file:**
+```js
+'use client' // tells Next.js this component runs in the browser, not on the server
+```
+
+**Section dividers inside every component (always in this order):**
+```js
+// ─── STATE ───        (useState declarations live here)
+// ─── EFFECTS ───      (useEffect hooks live here)
+// ─── FETCH ───        (async functions that talk to Supabase live here)
+// ─── HANDLERS ───     (functions triggered by user actions like clicks live here)
+// ─── RENDER ───       (the return statement and JSX live here)
+```
+
+**JSX section markers:**
+```jsx
+{/* ── SECTION NAME ── */}
+  ... jsx goes here ...
+{/* ── END SECTION NAME ── */}
+```
+
+**Component order — always:**
+```
+useState declarations → useEffect hooks → async fetch functions → handler functions → return (JSX)
+```
+
+---
+
+## Design System
+
+**Vibe:** Fresh, clean, warm, small-business human.
+Light mode only. Never dark. Never corporate. Never cold.
+Someone opens this and immediately feels *trust* — like walking into a spotless, well-run home.
+
+**Colors:**
+```
+Background:   #FFFFFF  — white base, main page background
+Card surface: #F8FAFB  — slightly off-white, used for cards and panels
+Primary:      #4CAF82  — soft green, main buttons and accents
+Accent:       #5BAFD6  — light blue, highlights and links
+Text:         #1A1A2E  — near-black, main readable text
+Muted text:   #6B7280  — gray, secondary labels and timestamps
+Border:       #E5E7EB  — light gray, card outlines and dividers
+Warning/New:  #FCD34D  — yellow, highlights new clients on the calendar
+```
+
+**Typography:** Plus Jakarta Sans via Google Fonts. Fall back to `font-sans`.
+
+**Responsive priority:**
+- Owner dashboard → desktop first, then adapt down to mobile
+- Worker and client portals → mobile first, then adapt up to desktop
+
+---
+
+## Getting business_id — Do It This Way Every Time
+
+```js
+const { data: bizData } = await supabase
+  .from('businesses')              // look in the businesses table
+  .select('id')                    // we only need the id column
+  .eq('owner_id', user.id)         // filter: only rows where owner_id matches the logged-in user
+
+const businessId = bizData?.[0]?.id  // safely grab the first result's id; returns undefined if nothing found
+```
+
+**Never use `.single()`** — it crashes if the query returns 0 or 2+ rows. `?.[0]?.id` is safe in all situations.
+
+---
+
+## Known Bug Patterns — Never Repeat These
+
+| Bug | What Goes Wrong | The Fix |
+|-----|----------------|---------|
+| `.single()` on any Supabase query | Crashes if 0 or 2+ rows returned | Always use `?.[0]?.id` array access |
+| `fetchData(user)` wrapper that ignores `user` param | Silently fetches wrong user's data | Pass `user` directly into every fetch function |
+| State declared as `[Workers, setWorkers]` but used as `workers` | React can't find the variable | Casing must match exactly everywhere |
+| `apt.clients.name` on joined Supabase data | Crashes if join returns null | Always write `apt.clients?.name` with optional chaining |
+
+---
+
+## Role System
+
+Single login at `/login`. After sign-in, look up `role` in the `users` table and redirect:
+
+| Role | Redirect | Access |
+|------|----------|--------|
+| `owner` | `/dashboard` | Full control of the entire app |
+| `manager` | `/portal/manager` | Today's route, clock in/out |
+| `cleaner` | `/portal/cleaner` | Today's jobs, clock in/out, weekly hours |
+| `client` | `/portal/client` | Appointments, payment status, reschedule requests |
+
+---
+
+## Language Support
+
+Full Spanish / English toggle. Each user's preference is stored as `language_preference`: `en` | `es`.
+
+**Never hardcode English strings directly in JSX.**
+Use a translation object or i18n pattern so every user-facing string exists in both `en` and `es`.
+
+---
+
+## Payments
+
+Accepted: **Cash, Zelle, Venmo** only.
+Do not build Stripe or any card form — that is a future version.
+Show a placeholder: "Online card payments coming soon."
+
+---
+
+## The Calendar
+
+The calendar is the most important feature in this app. Build it carefully.
+
+- Owner desktop: monthly grid, click a day → side panel with full details
+- All users mobile: defaults to today's single-day view
+- New client rule: any client with fewer than 4 completed cleanings gets a **yellow** (#FCD34D) background on their calendar entry
+
+---
+
+## Database Tables (Quick Reference)
+
+- `businesses` — id, name, owner_id
+- `users` — id, business_id, role, language_preference, notification_preference
+- `clients` — id, business_id, name, phone, email, address, city, frequency, cleaning_count, owner_notes
+- `appointments` — id, business_id, client_id, date, time, price, status, notes, reschedule_fee
+- `workers` — id, business_id, name, phone, hourly_rate, tier (`manager` | `cleaner`)
+- `timesheets` — id, worker_id, appointment_id, clock_in, clock_out, hours_worked, date
+- `payments` — id, appointment_id, amount, paid, paid_date, method (`cash` | `zelle` | `venmo` | `app`)
+- `reschedule_requests` — id, appointment_id, client_id, requested_date, requested_time, fee, status
+
+---
+
+## Rules
+
+1. Comment every non-trivial line — plain English, no exceptions.
+2. Every new file gets `'use client'` at top, section dividers, and JSX markers.
+3. Never use `.single()` on any Supabase query.
+4. Always use optional chaining on joined data: `row.relation?.field`
+5. State variable names must match exactly between declaration and usage — casing included.
+6. Never hardcode English strings in JSX — always support both `en` and `es`.
+7. Mobile-first for worker and client portals. Desktop-first for owner dashboard.
+8. Minimum change needed. Do not touch files outside the scope of the current task.
+9. Never rewrite an entire file unless Carlos explicitly says to.

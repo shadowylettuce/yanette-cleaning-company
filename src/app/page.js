@@ -18,6 +18,9 @@ export default function LandingPage() {
     setLang(lang === 'en' ? 'es' : 'en')         // if currently English switch to Spanish, and vice versa
   }
 
+  const reviews = t.testimonialsList // all 10 client quotes for the current language
+  const marqueeReviews = [...reviews, ...reviews] // duplicate the list so the CSS loop has no visible jump
+
   // ─── RENDER ───
   return (
     <main className="min-h-screen bg-page text-ink">
@@ -121,19 +124,22 @@ export default function LandingPage() {
       {/* ── TESTIMONIALS ── */}
       <section className="bg-card px-6 py-20">
         <h2 className="text-center text-3xl font-bold">{t.testimonialsTitle}</h2>
-        {/* placeholder reviews — swap for real client quotes when Yanette provides them */}
-        <div className="mx-auto mt-10 grid max-w-5xl gap-6 sm:grid-cols-3">
-          {[
-            { quote: t.testimonial1, name: t.testimonial1Name },
-            { quote: t.testimonial2, name: t.testimonial2Name },
-            { quote: t.testimonial3, name: t.testimonial3Name },
-          ].map((review) => (
-            <div key={review.name} className="rounded-2xl border border-line bg-white p-6">
-              <div className="text-accent">★★★★★</div>
-              <p className="mt-3 italic">&ldquo;{review.quote}&rdquo;</p>
-              <p className="mt-3 text-sm font-semibold text-muted">{review.name}</p>
-            </div>
-          ))}
+        {/* overflow-hidden viewport clips the scrolling row; hover pauses via CSS in globals.css */}
+        <div className="marquee-viewport mx-auto mt-10 max-w-6xl overflow-hidden">
+          {/* flex row of cards — duplicated list animates left in an infinite loop */}
+          <div className="marquee-track flex w-max gap-6">
+            {marqueeReviews.map((review, index) => (
+              // index in key keeps duplicate copies unique; same quote can appear twice in the loop
+              <div
+                key={`${review.name}-${index}`}
+                className="w-[280px] shrink-0 rounded-2xl border border-line bg-white p-6 sm:w-[320px]"
+              >
+                <div className="text-accent">★★★★★</div>
+                <p className="mt-3 italic">&ldquo;{review.quote}&rdquo;</p>
+                <p className="mt-3 text-sm font-semibold text-muted">{review.name}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
       {/* ── END TESTIMONIALS ── */}

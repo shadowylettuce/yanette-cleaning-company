@@ -22,3 +22,26 @@ body {
   background-color: #FFFFFF; /* light mode only — never dark */
   color: #1A1A2E;            /* default text color is our near-black */
 }
+
+/* ── TESTIMONIALS MARQUEE ──
+   Continuous horizontal scroll for client review cards on the landing page */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); } /* -50% because the track duplicates the list for a seamless loop */
+}
+
+.marquee-track {
+  animation: marquee-scroll 45s linear infinite; /* slow steady scroll across all 10 cards */
+}
+
+.marquee-viewport:hover .marquee-track {
+  animation-play-state: paused; /* let visitors pause and read a card by hovering */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;              /* no motion for users who prefer reduced movement */
+    flex-wrap: wrap;              /* stack cards in a static grid instead */
+    justify-content: center;
+  }
+}

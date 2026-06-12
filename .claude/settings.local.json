@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "PowerShell(npx next build)",
-      "PowerShell(npx next build 2>$null | Select-Object -Last 5)"
+      "PowerShell(npx next build 2>$null | Select-Object -Last 5)",
+      "Bash(Select-String -Pattern \"scripts\" -Context 0,10)",
+      "Skill(claude-api)"
     ]
   }
 }
