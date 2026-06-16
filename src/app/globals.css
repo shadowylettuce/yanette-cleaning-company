@@ -41,3 +41,36 @@ body {
     justify-content: center;
   }
 }
+
+/* ── CINEMATIC LANDING: CREW SCRUBBING BOB ──
+   Each woman in the crew gently rises and dips so she looks alive while cleaning.
+   Only transform is animated (cheap + smooth). */
+@keyframes crew-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-6px) rotate(-2deg); }
+}
+
+.crew-bob {
+  animation: crew-bob 1.1s ease-in-out infinite; /* slow, steady scrubbing motion */
+  transform-box: fill-box;                       /* rotate/scale around the figure itself, not the SVG origin */
+}
+
+/* ── CINEMATIC LANDING: SPARKLE TWINKLE ──
+   Sparkles fade and shrink in and out so the finished kitchen looks like it is glinting. */
+@keyframes sparkle-twinkle {
+  0%, 100% { transform: scale(0.6); opacity: 0.25; }
+  50%      { transform: scale(1);   opacity: 1; }
+}
+
+.sparkle-twinkle {
+  display: inline-block;                              /* so the transform applies to the sparkle box */
+  animation: sparkle-twinkle 2.2s ease-in-out infinite; /* gentle endless glint */
+}
+
+/* turn the decorative loops off for visitors who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .crew-bob,
+  .sparkle-twinkle {
+    animation: none;
+  }
+}

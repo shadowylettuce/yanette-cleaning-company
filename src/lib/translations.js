@@ -82,6 +82,24 @@ export const translations = {
     contactDesc: 'Serving the Bay Area. Call or email us to book your cleaning today.',
     serviceArea: 'Service Area: Bay Area, California',
 
+    // ── cinematic landing: "Who We Are" intro panel (first beat, over the messy kitchen) ──
+    whoWeAreTitle: 'Who We Are',
+    whoWeAreDesc: "We are Yanette's House Cleaning Company — a small Bay Area team that treats every home like our own. Scroll down and watch us get to work.",
+
+    // ── cinematic landing: "How to Pay" beat (Cash / Zelle / Venmo) ──
+    howToPayTitle: 'How to Pay',
+    payCash: 'Cash',
+    payCashDesc: 'Hand cash to your cleaning team or to Yanette on the day of service.',
+    payZelle: 'Zelle',
+    payZelleDesc: 'Send via Zelle to our business phone number — quick and free.',
+    payVenmo: 'Venmo',
+    payVenmoDesc: 'Send via Venmo to our business account before or after the clean.',
+    payCardSoon: 'Online card payments coming soon.',
+
+    // ── cinematic landing: accessibility labels for the animated scene ──
+    sceneAriaLabel: 'Animated kitchen being cleaned by our team as you scroll.',
+    scrollHint: 'Scroll to clean the kitchen',
+
     // ── login page ──
     loginTitle: 'Welcome Back',
     loginSubtitle: 'Sign in to your account',
@@ -329,6 +347,24 @@ export const translations = {
     contactTitle: 'Contáctenos',
     contactDesc: 'Servimos el Área de la Bahía. Llame o escríbanos para reservar su limpieza hoy.',
     serviceArea: 'Área de Servicio: Área de la Bahía, California',
+
+    // ── landing cinematográfico: panel de presentación "Quiénes Somos" (primera escena, sobre la cocina sucia) ──
+    whoWeAreTitle: 'Quiénes Somos',
+    whoWeAreDesc: "Somos Yanette's House Cleaning Company — un pequeño equipo del Área de la Bahía que cuida cada hogar como si fuera el nuestro. Desplácese y véanos trabajar.",
+
+    // ── landing cinematográfico: escena "Cómo Pagar" (Efectivo / Zelle / Venmo) ──
+    howToPayTitle: 'Cómo Pagar',
+    payCash: 'Efectivo',
+    payCashDesc: 'Entregue el efectivo a su equipo de limpieza o a Yanette el día del servicio.',
+    payZelle: 'Zelle',
+    payZelleDesc: 'Envíe por Zelle al número de teléfono del negocio — rápido y gratis.',
+    payVenmo: 'Venmo',
+    payVenmoDesc: 'Envíe por Venmo a la cuenta del negocio antes o después de la limpieza.',
+    payCardSoon: 'Pagos con tarjeta en línea próximamente.',
+
+    // ── landing cinematográfico: etiquetas de accesibilidad para la escena animada ──
+    sceneAriaLabel: 'Cocina animada que nuestro equipo limpia mientras usted se desplaza.',
+    scrollHint: 'Desplácese para limpiar la cocina',
 
     // ── login page ──
     loginTitle: 'Bienvenido de Nuevo',
