@@ -4,7 +4,6 @@
 // Sections in order: Nav → Hero → Services → How It Works → Why Choose Us → Testimonials → Contact
 
 import { useState } from 'react'                   // React tool for remembering values between renders
-import Link from 'next/link'                       // Next.js link component for moving between pages
 import { translations } from '@/lib/translations'  // all UI text in English and Spanish
 import CinematicLanding from '@/components/landing/CinematicLanding' // the animated scroll-to-clean kitchen experience
 
@@ -24,20 +23,14 @@ export default function LandingPage() {
     <main className="min-h-screen bg-page text-ink">
 
       {/* ── NAV ── */}
-      {/* sticky top bar: company name on the left, language toggle + login on the right */}
+      {/* sticky top bar: company name on the left, language toggle on the right (no login button — devs use /login directly) */}
       <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-line bg-white px-6 py-4">
         {/* company name acts as the logo until Yanette provides a logo file */}
         <span className="text-lg font-bold text-brand">{t.companyName}</span>
-        <div className="flex items-center gap-3">
-          {/* small button that flips the whole page between English and Spanish */}
-          <button onClick={toggleLanguage} className="rounded-full border border-line px-3 py-1 text-sm text-muted hover:border-brand">
-            {lang === 'en' ? 'ES' : 'EN'} {/* show the language you would SWITCH TO, not the current one */}
-          </button>
-          {/* Log In button — visible on every section because the nav is sticky */}
-          <Link href="/login" className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white hover:bg-brand-dark">
-            {t.logIn}
-          </Link>
-        </div>
+        {/* small button that flips the whole page between English and Spanish */}
+        <button onClick={toggleLanguage} className="rounded-full border border-line px-3 py-1 text-sm text-muted hover:border-brand">
+          {lang === 'en' ? 'ES' : 'EN'} {/* show the language you would SWITCH TO, not the current one */}
+        </button>
       </nav>
       {/* ── END NAV ── */}
 

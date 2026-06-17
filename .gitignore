@@ -1,11 +1,12 @@
 # .gitignore — files git should NEVER track or upload to GitHub
+# Patterns are NOT slash-anchored, so they match in any folder (frontend/, workflow/, etc.)
 
 # dependencies — huge folder of installed packages; rebuilt anytime with `npm install`
-/node_modules
+node_modules/
 
 # Next.js build output — generated files, rebuilt anytime with `npm run build`
-/.next
-/out
+.next/
+out/
 
 # environment variables — contains your SECRET Supabase keys. NEVER push this to GitHub.
 .env.local

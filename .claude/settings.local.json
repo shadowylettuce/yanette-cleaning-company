@@ -6,7 +6,12 @@
       "Bash(Select-String -Pattern \"scripts\" -Context 0,10)",
       "Skill(claude-api)",
       "Bash(npx skills *)",
-      "Read(//c/Users/cgran/.claude/**)"
+      "Read(//c/Users/cgran/.claude/**)",
+      "Bash(tasklist)",
+      "PowerShell(Get-CimInstance *)",
+      "PowerShell(Stop-Process *)",
+      "Bash(cd *)",
+      "PowerShell(Test-Path *)"
     ]
   }
 }
