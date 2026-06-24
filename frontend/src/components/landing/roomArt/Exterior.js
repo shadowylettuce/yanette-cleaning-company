@@ -1,8 +1,7 @@
 'use client' // tells Next.js this component runs in the browser, not on the server
 
 // Exterior.js — the sunny finale: San Francisco's Painted Ladies seen from Alamo Square,
-// with a faint downtown skyline behind, so the ending subtly says "Bay Area".
-// No messy layer (the job is done) — the crew stands on the lawn out front.
+// with a sidewalk between the row and the park lawn. No messy layer (the job is done).
 
 import { svgProps } from './shared'
 
@@ -59,46 +58,39 @@ export function CleanExterior() {
       <ellipse cx="940" cy="90" rx="100" ry="38" fill="#FFFFFF" opacity="0.8" />
       <ellipse cx="1020" cy="100" rx="60" ry="26" fill="#FFFFFF" opacity="0.75" />
 
-      {/* ── FAINT DOWNTOWN SKYLINE (behind the houses, hazy on purpose) ── */}
-      {/* far/back haze layer for depth */}
-      <g fill="#CBD8E2" opacity="0.3">
-        <rect x="320" y="300" width="80" height="70" />
-        <rect x="610" y="296" width="70" height="74" />
-        <rect x="960" y="300" width="60" height="70" />
-      </g>
-      {/* front skyline layer with two recognizable SF towers */}
-      <g fill="#B8C9D6" opacity="0.35">
-        <rect x="170" y="252" width="70" height="120" />
-        <rect x="262" y="278" width="48" height="94" />
-        {/* Salesforce Tower — tallest, tapered with a rounded crown */}
-        <path d="M430 372 L430 252 Q455 222 480 252 L480 372 Z" />
-        <rect x="540" y="270" width="58" height="102" />
-        {/* Transamerica Pyramid — the pointed one */}
-        <path d="M690 372 L720 244 L750 372 Z" />
-        <rect x="820" y="274" width="54" height="98" />
-        <rect x="900" y="258" width="62" height="114" />
-        <rect x="1000" y="282" width="46" height="90" />
-      </g>
-
-      {/* ── ALAMO SQUARE LAWN (the park the crew stands on) ── */}
+      {/* ── ALAMO SQUARE LAWN (green base — park in front, hill behind the houses) ── */}
       <path d="M0 524 Q300 506 620 524 T1200 518 L1200 760 L0 760 Z" fill="#8BC98A" />
-      <path d="M0 560 Q300 546 620 560 T1200 556 L1200 760 L0 760 Z" fill="#7AB879" opacity="0.6" />
-      {/* mowed-grass sweeps for a little texture */}
-      <path d="M0 612 Q400 592 800 612 T1200 606" stroke="#6EAD6C" strokeWidth="4" fill="none" opacity="0.4" />
 
       {/* ── THE PAINTED LADIES (the iconic row, stepped colors) ── */}
       {/* props are numbers (not strings) so the arithmetic inside PaintedLady adds instead of concatenating */}
-      <PaintedLady x={110} w={150} top={300} body="#FBF6EE" roof="#E7D3B3" trim="#FFFFFF" /> {/* cream */}
-      <PaintedLady x={320} w={150} top={290} body="#E8C4C4" roof="#C98A8A" trim="#FBF6EE" /> {/* dusty rose */}
-      <PaintedLady x={530} w={150} top={296} body="#B7D5C4" roof="#7FA994" trim="#FBF6EE" /> {/* sage */}
-      <PaintedLady x={740} w={150} top={286} body="#CDEBF7" roof="#5BAFD6" trim="#FFFFFF" /> {/* soft blue */}
-      <PaintedLady x={950} w={150} top={300} body="#F2D98C" roof="#D9B85A" trim="#FBF6EE" /> {/* butter gold */}
+      {/* x positions: 150px-wide houses with ~30px gaps, centered in the 1200px frame */}
+      <PaintedLady x={165} w={150} top={300} body="#FBF6EE" roof="#E7D3B3" trim="#FFFFFF" /> {/* cream */}
+      <PaintedLady x={345} w={150} top={290} body="#E8C4C4" roof="#C98A8A" trim="#FBF6EE" /> {/* dusty rose */}
+      <PaintedLady x={525} w={150} top={296} body="#B7D5C4" roof="#7FA994" trim="#FBF6EE" /> {/* sage */}
+      <PaintedLady x={705} w={150} top={286} body="#CDEBF7" roof="#5BAFD6" trim="#FFFFFF" /> {/* soft blue */}
+      <PaintedLady x={885} w={150} top={300} body="#F2D98C" roof="#D9B85A" trim="#FBF6EE" /> {/* butter gold */}
+
+      {/* ── SIDEWALK (concrete strip between the row houses and the park lawn) ── */}
+      <path d="M0 556 L1200 556 L1200 604 Q600 600 0 604 Z" fill="#D4D8DE" />
+      {/* back curb where the walk meets the house lawn */}
+      <path d="M0 556 L1200 556" stroke="#9CA3AF" strokeWidth="4" fill="none" />
+      {/* front curb where the walk meets the park grass */}
+      <path d="M0 604 L1200 604" stroke="#A8ADB5" strokeWidth="3" fill="none" />
+      {/* slab seam lines so the walk reads as poured concrete panels */}
+      {[100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100].map((sx) => (
+        <line key={sx} x1={sx} y1="558" x2={sx} y2="602" stroke="#B8BDC5" strokeWidth="1.5" opacity="0.55" />
+      ))}
+
+      {/* ── FOREGROUND PARK LAWN (where the crew stands, below the sidewalk) ── */}
+      <path d="M0 604 Q300 592 620 604 T1200 598 L1200 760 L0 760 Z" fill="#7AB879" opacity="0.85" />
+      {/* mowed-grass sweeps for a little texture */}
+      <path d="M0 648 Q400 632 800 648 T1200 642" stroke="#6EAD6C" strokeWidth="4" fill="none" opacity="0.4" />
 
       {/* a pair of park trees flanking the lawn */}
-      <ellipse cx="60" cy="540" rx="46" ry="56" fill="#4CAF82" opacity="0.85" />
-      <rect x="52" y="560" width="16" height="40" fill="#9A7B53" />
-      <ellipse cx="1150" cy="548" rx="50" ry="60" fill="#4CAF82" opacity="0.8" />
-      <rect x="1142" y="568" width="16" height="44" fill="#9A7B53" />
+      <ellipse cx="60" cy="670" rx="46" ry="56" fill="#4CAF82" opacity="0.85" />
+      <rect x="52" y="690" width="16" height="40" fill="#9A7B53" />
+      <ellipse cx="1150" cy="678" rx="50" ry="60" fill="#4CAF82" opacity="0.8" />
+      <rect x="1142" y="698" width="16" height="44" fill="#9A7B53" />
     </svg>
   )
 }
