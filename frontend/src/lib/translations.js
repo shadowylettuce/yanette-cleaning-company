@@ -82,9 +82,9 @@ export const translations = {
     contactDesc: 'Serving the Bay Area. Call or email us to book your cleaning today.',
     serviceArea: 'Service Area: Bay Area, California',
 
-    // ── cinematic landing: "Who We Are" intro panel (first beat, over the messy kitchen) ──
+    // ── cinematic landing: "Who We Are" intro panel (first beat, after bedroom is cleaned) ──
     whoWeAreTitle: 'Who We Are',
-    whoWeAreDesc: "We are Yanette's Cleaning Service — a small Bay Area team who's been in service for 15 years. Scroll to watch us get to work.",
+    whoWeAreDesc: "We are Yanette's Cleaning Service — a small Bay Area team who's been in service for 15 years. Scroll to watch us clean room by room.",
 
     // ── cinematic landing: "How to Pay" beat (Cash / Zelle / Venmo) ──
     howToPayTitle: 'How to Pay',
@@ -97,8 +97,8 @@ export const translations = {
     payCardSoon: 'Online card payments coming soon.',
 
     // ── cinematic landing: accessibility labels for the animated scene ──
-    sceneAriaLabel: 'Animated kitchen being cleaned by our team as you scroll.',
-    scrollHint: 'Scroll to clean the kitchen',
+    sceneAriaLabel: 'Animated tour of rooms being cleaned by our team as you scroll, ending outside on a sunny day.',
+    scrollHint: 'Scroll to watch us clean',
 
     // ── login page ──
     loginTitle: 'Welcome Back',
@@ -348,9 +348,9 @@ export const translations = {
     contactDesc: 'Servimos el Área de la Bahía. Llame o escríbanos para reservar su limpieza hoy.',
     serviceArea: 'Área de Servicio: Área de la Bahía, California',
 
-    // ── landing cinematográfico: panel de presentación "Quiénes Somos" (primera escena, sobre la cocina sucia) ──
+    // ── landing cinematográfico: panel de presentación "Quiénes Somos" (primera escena, tras limpiar el dormitorio) ──
     whoWeAreTitle: 'Quiénes Somos',
-    whoWeAreDesc: "Somos Yanette's House Cleaning Company — un pequeño equipo del Área de la Bahía que cuida cada hogar como si fuera el nuestro. Desplácese y véanos trabajar.",
+    whoWeAreDesc: "Somos Yanette's House Cleaning Company — un pequeño equipo del Área de la Bahía que cuida cada hogar como si fuera el nuestro. Desplácese y véanos limpiar habitación por habitación.",
 
     // ── landing cinematográfico: escena "Cómo Pagar" (Efectivo / Zelle / Venmo) ──
     howToPayTitle: 'Cómo Pagar',
@@ -363,8 +363,8 @@ export const translations = {
     payCardSoon: 'Pagos con tarjeta en línea próximamente.',
 
     // ── landing cinematográfico: etiquetas de accesibilidad para la escena animada ──
-    sceneAriaLabel: 'Cocina animada que nuestro equipo limpia mientras usted se desplaza.',
-    scrollHint: 'Desplácese para limpiar la cocina',
+    sceneAriaLabel: 'Recorrido animado de habitaciones que nuestro equipo limpia mientras usted se desplaza, terminando afuera en un día soleado.',
+    scrollHint: 'Desplácese para vernos limpiar',
 
     // ── login page ──
     loginTitle: 'Bienvenido de Nuevo',

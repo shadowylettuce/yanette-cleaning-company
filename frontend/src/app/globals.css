@@ -55,6 +55,20 @@ body {
   transform-box: fill-box;                       /* rotate/scale around the figure itself, not the SVG origin */
 }
 
+/* ── CINEMATIC LANDING: CREW HOVER JUMP ──
+   Nested inside .crew-bob so the scrubbing loop keeps running while the visitor hovers.
+   Only transform is animated (cheap + smooth). */
+.crew-hover {
+  cursor: pointer;                                                    /* hand cursor — these figures are playful and interactive */
+  transform-box: fill-box;                                            /* jump pivots around the figure, not the SVG corner */
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);      /* springy pop up, springy settle back */
+}
+
+.crew-hover:hover,
+.crew-hover:active {
+  transform: translateY(-14px); /* hop up a bit when the cursor (or finger) lands on her */
+}
+
 /* ── CINEMATIC LANDING: SPARKLE TWINKLE ──
    Sparkles fade and shrink in and out so the finished kitchen looks like it is glinting. */
 @keyframes sparkle-twinkle {
@@ -67,10 +81,33 @@ body {
   animation: sparkle-twinkle 2.2s ease-in-out infinite; /* gentle endless glint */
 }
 
+/* ── CINEMATIC LANDING: SMOKE PUFF DRIFT ──
+   Smoke ellipses drift upward and swell slightly while the overlay is visible. */
+@keyframes smoke-drift {
+  0%   { transform: translateY(0) scale(1);   opacity: 0.55; }
+  50%  { transform: translateY(-18px) scale(1.08); opacity: 0.75; }
+  100% { transform: translateY(-36px) scale(1.12); opacity: 0.5; }
+}
+
+.smoke-puff {
+  filter: blur(12px);                               /* soft edges so each puff reads as real smoke */
+  animation: smoke-drift 2.4s ease-in-out infinite; /* gentle upward drift loop */
+}
+
 /* turn the decorative loops off for visitors who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .crew-bob,
-  .sparkle-twinkle {
+  .sparkle-twinkle,
+  .smoke-puff {
     animation: none;
+  }
+
+  .crew-hover {
+    transition: transform 0.15s ease; /* calmer settle when the visitor prefers less motion */
+  }
+
+  .crew-hover:hover,
+  .crew-hover:active {
+    transform: translateY(-8px); /* smaller hop — still playful, but gentler */
   }
 }

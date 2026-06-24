@@ -5,7 +5,7 @@
 
 import { useState } from 'react'                   // React tool for remembering values between renders
 import { translations } from '@/lib/translations'  // all UI text in English and Spanish
-import CinematicLanding from '@/components/landing/CinematicLanding' // the animated scroll-to-clean kitchen experience
+import CinematicLanding from '@/components/landing/CinematicLanding' // the animated multi-room scroll-to-clean experience
 import QuotesSection from '@/components/landing/QuotesSection'       // real client testimonials shown below the animation
 
 export default function LandingPage() {

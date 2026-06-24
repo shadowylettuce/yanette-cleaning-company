@@ -1,9 +1,9 @@
 'use client' // tells Next.js this component runs in the browser, not on the server
 
-// Sparkles.js — the field of twinkling sparkles that appears ONLY at the very end,
-// once the whole kitchen has been scrolled clean. The parent CinematicLanding keeps this
-// hidden (opacity 0) until the final scroll beat, then fades it in. Each sparkle twinkles
-// on its own timing via the .sparkle-twinkle class (keyframes live in globals.css).
+// Sparkles.js — twinkle field that bursts in after each interior room is cleaned.
+// The parent CinematicLanding keeps each .js-sparkles-N layer hidden until smoke clears,
+// then fades it in for that room act. Each sparkle twinkles on its own timing via
+// the .sparkle-twinkle class (keyframes live in globals.css).
 
 // fixed scatter of sparkle positions across the scene (percentages of width/height),
 // each with its own size and animation delay so they don't all flash at once

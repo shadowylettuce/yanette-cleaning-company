@@ -1,20 +1,24 @@
 'use client' // tells Next.js this component runs in the browser, not on the server
 
-// CinematicLanding.js — the heart of the new landing page.
-// DESKTOP: the kitchen is pinned full-screen and, as the visitor scrolls, a crew of women
-//   wipes it clean left→right while info "beats" pop in between cleaning moments, ending in sparkles.
-// MOBILE / reduced-motion: the same content is shown as a calm, already-clean stacked layout (no scroll-jacking).
+// CinematicLanding.js — the heart of the landing page scroll story.
+// DESKTOP: four interior rooms are cleaned via smoke + sparkle transitions (bedroom → bathroom →
+//   kitchen → living room), then the crew walks outside for a sunny Contact finale.
+// MOBILE / reduced-motion: calm stacked layout with a sunny exterior hero.
 
 import { useEffect, useRef, useState } from 'react' // React tools: side effects, DOM refs, and remembered values
 import gsap from 'gsap'                              // the animation engine
 import { ScrollTrigger } from 'gsap/ScrollTrigger'  // GSAP plugin that ties animation progress to scroll position
-import KitchenScene from './KitchenScene'           // the messy/clean kitchen illustration
+import RoomScene from './RoomScene'                 // illustrated room backdrops (bedroom through exterior)
 import Crew from './Crew'                            // the team of women who do the cleaning
-import Sparkles from './Sparkles'                    // the end-of-scroll twinkle field
+import Sparkles from './Sparkles'                    // twinkle burst after each room is cleaned
+import SmokeOverlay from './SmokeOverlay'            // full-screen smoke between cleaning acts
 import PopupCard from './PopupCard'                  // the reusable frosted card for each beat
-import { clientQuotes } from '@/lib/clientQuotes'    // Yanette's real client reviews (verbatim) — full list lives in QuotesSection
+import { clientQuotes } from '@/lib/clientQuotes'    // Yanette's real client reviews (verbatim)
 
 gsap.registerPlugin(ScrollTrigger) // turn the ScrollTrigger plugin on (safe to call more than once)
+
+// room keys in scroll order — bedroom first, sunny exterior last
+const ROOM_ORDER = ['bedroom', 'bathroom', 'kitchen', 'livingRoom', 'exterior']
 
 export default function CinematicLanding({ t }) {
   // ─── STATE ───
@@ -31,68 +35,132 @@ export default function CinematicLanding({ t }) {
   }, [])
 
   useEffect(() => {                                  // builds (and later tears down) the whole desktop scroll animation
-    // gsap.context scopes every '.js-*' selector below to inside the desktop block and gives us one-call cleanup
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia() // matchMedia runs a branch only while its media query is true, and auto-reverts otherwise
 
-      // DESKTOP + real motion only: wide screens where the user has NOT asked for reduced motion
       mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
-        const pin = sceneRef.current?.querySelector('.js-pin') // the full-screen element we pin in place while scrolling
+        const pin = sceneRef.current?.querySelector('.js-pin')   // the full-screen element we pin while scrolling
         const crew = sceneRef.current?.querySelector('.js-crew') // the crew wrapper we slide left→right
+        const cards = sceneRef.current?.querySelectorAll('.js-popup') // all five message cards in DOM order
 
-        // starting states: mess fully present, crew at far left, every card + the sparkles hidden
-        gsap.set('.js-messy', { '--dirty': '0%' })                       // 0% cleaned = whole kitchen is messy
-        gsap.set('.js-crew', { x: 0 })                                   // crew parked at the left edge
-        gsap.set('.js-popup', { opacity: 0, scale: 0.9, y: 24 })         // cards start invisible + slightly small/low
-        gsap.set(sceneRef.current.querySelector('.js-popup'), { opacity: 1, scale: 1, y: 0 }) // ...except Who We Are: visible the moment you land
-        gsap.set('.js-sparkles', { opacity: 0 })                         // no sparkles until the very end
+        // ── starting states ──
+        gsap.set('.js-room', { opacity: 0, xPercent: 0 })                       // hide + center every room layer
+        gsap.set('.js-room[data-room="bedroom"]', { opacity: 1 })              // only the messy bedroom is visible at rest
+        gsap.set('.js-messy-bedroom', { '--dirty': '0%' })                     // bedroom starts fully messy
+        gsap.set('.js-messy-bathroom', { '--dirty': '0%' })                    // other interior rooms start messy (hidden until crossfade)
+        gsap.set('.js-messy-kitchen', { '--dirty': '0%' })
+        gsap.set('.js-messy-livingRoom', { '--dirty': '0%' })
+        gsap.set('.js-crew', { x: 0 })                                         // crew parked at the left edge
+        gsap.set('.js-popup', { opacity: 0, scale: 0.9, y: 24 })               // every card hidden until its act
+        gsap.set('.js-sparkles', { opacity: 0 })                               // sparkles hidden until a room is cleaned
+        gsap.set('.js-smoke', { opacity: 0 })                                   // smoke hidden until the first scroll act
 
-        // master timeline: its progress (0→1) is driven directly by scroll thanks to scrollTrigger.scrub
+        // timeline duration tokens — tuned so ~1.0 smoke ≈ ~1 second of scrolling feel
+        const D = {
+          smoke: 1.0,      // smoke fades in
+          smokeOut: 0.4,   // smoke fades out
+          clean: 0.2,      // mess vanishes quickly once smoke clears
+          sparkle: 0.5,    // sparkle burst after clean
+          msgIn: 0.6,      // card spring entrance
+          hold: 1.6,       // time to read the card while scrolling (longer = calmer, easier to read)
+          msgOut: 0.4,     // card exit
+          walk: 1.0,       // duration of the room-to-room camera pan (tracking shot)
+        }
+
         const tl = gsap.timeline({
-          defaults: { ease: 'none' }, // most tweens move linearly with the scroll wheel
+          defaults: { ease: 'none' },
           scrollTrigger: {
-            trigger: pin,             // watch the pinned element
-            start: 'top top',         // begin when its top reaches the top of the viewport
-            end: '+=4500',            // run the whole story over 4500px of scrolling
-            pin: pin,                 // freeze the kitchen on screen for that whole distance
-            scrub: 0.6,               // tie animation to scroll with a touch of smoothing
-            invalidateOnRefresh: true, // recompute pixel distances (like the crew's travel) on resize
+            trigger: pin,
+            start: 'top top',
+            end: '+=10800',           // long scroll distance for five acts — more pixels per beat = slower, calmer feel
+            pin: pin,
+            scrub: 0.8,               // slightly looser catch-up so the animation eases toward the scroll position
+            invalidateOnRefresh: true,
           },
         })
 
-        // CONTINUOUS over the whole scroll: wipe the mess away AND walk the crew to the right edge
-        tl.to('.js-messy', { '--dirty': '100%', duration: 10 }, 0)                           // mess clears left→right
-          .to('.js-crew', { x: () => pin.offsetWidth - crew.offsetWidth, duration: 10 }, 0)  // crew travels to the far right
-
-        // helper: pop a card IN at `inAt`, and (optionally) pop it back OUT at `outAt`
-        const beat = (index, inAt, outAt) => {
-          const card = sceneRef.current.querySelectorAll('.js-popup')[index] // the card for this beat, in DOM order
-          // spring-style entrance using only transform + opacity (back.out ≈ our brand spring easing)
-          tl.fromTo(card, { opacity: 0, scale: 0.9, y: 24 }, { opacity: 1, scale: 1, y: 0, duration: 0.6, ease: 'back.out(1.7)' }, inAt)
-          if (outAt != null) tl.to(card, { opacity: 0, scale: 0.96, y: -12, duration: 0.4, ease: 'power2.in' }, outAt) // quicker exit
+        // helper: spring a card IN at `at`, optionally OUT at `outAt`
+        const popCard = (index, at, outAt) => {
+          const card = cards[index]
+          tl.fromTo(card, { opacity: 0, scale: 0.9, y: 24 }, { opacity: 1, scale: 1, y: 0, duration: D.msgIn, ease: 'back.out(1.7)' }, at)
+          if (outAt != null) tl.to(card, { opacity: 0, scale: 0.96, y: -12, duration: D.msgOut, ease: 'power2.in' }, outAt)
         }
 
-        // the five beats, spaced apart so the crew's cleaning animation shows in the GAPS between cards
-        // Who We Are is already visible at rest (set above), so it only needs an EXIT as cleaning begins
-        tl.to(sceneRef.current.querySelector('.js-popup'), { opacity: 0, scale: 0.96, y: -12, duration: 0.5, ease: 'power2.in' }, 1.4)
-        beat(1, 2.4, 3.8)   // How It Works
-        beat(2, 4.6, 6.0)   // How to Pay
-        beat(3, 6.8, 8.2)   // Customer Reviews
-        beat(4, 8.8)        // Contact — pops in last and STAYS to the end
+        // helper: smoke in → smoke out + clean + sparkles for one interior room
+        const cleanRoom = (roomKey, sparkleIndex, at) => {
+          tl.to('.js-smoke', { opacity: 1, duration: D.smoke, ease: 'power2.in' }, at)
+          const clearAt = at + D.smoke
+          tl.to('.js-smoke', { opacity: 0, duration: D.smokeOut, ease: 'power2.out' }, clearAt)
+          tl.to(`.js-messy-${roomKey}`, { '--dirty': '100%', duration: D.clean }, clearAt)
+          tl.to(`.js-sparkles-${sparkleIndex}`, { opacity: 1, duration: D.sparkle }, clearAt)
+          return clearAt + D.smokeOut
+        }
 
-        // the little "scroll to clean" hint fades away as soon as cleaning starts
-        tl.to('.js-hint', { opacity: 0, duration: 0.5 }, 0.4)
+        // helper: TRACKING SHOT — the room slides past the crew so it reads as the team walking
+        // forward into the next room (no snap-back). Old room exits left, new dirty room enters from the right.
+        const walkToRoom = (fromRoom, toRoom, at) => {
+          const endAt = at + D.walk                                            // when the pan finishes
+          // place the incoming room one full screen to the right, fully drawn and ready to slide in
+          tl.set(`.js-room[data-room="${toRoom}"]`, { opacity: 1, xPercent: 100 }, at)
+          if (toRoom !== 'exterior') {
+            tl.set(`.js-messy-${toRoom}`, { '--dirty': '0%' }, at)             // next interior room starts messy
+          }
+          // pan the camera: current room slides out to the left while the next room slides to center
+          tl.to(`.js-room[data-room="${fromRoom}"]`, { xPercent: -100, duration: D.walk, ease: 'power1.inOut' }, at)
+          tl.to(`.js-room[data-room="${toRoom}"]`, { xPercent: 0, duration: D.walk, ease: 'power1.inOut' }, at)
+          // park the room that left off-screen (hidden + recentered) so it can be reused cleanly later
+          tl.set(`.js-room[data-room="${fromRoom}"]`, { opacity: 0, xPercent: 0 }, endAt)
+          // crew takes a gentle step forward and settles — sells the walk without traveling/teleporting
+          tl.to('.js-crew', { x: 70, duration: D.walk * 0.5, ease: 'power1.out' }, at)
+          tl.to('.js-crew', { x: 0, duration: D.walk * 0.5, ease: 'power1.in' }, at + D.walk * 0.5)
+          return endAt
+        }
 
-        // SPARKLES: only fade in during the final stretch, after the whole kitchen is clean
-        tl.to('.js-sparkles', { opacity: 1, duration: 0.8 }, 9.2)
+        let t = 0 // cursor tracking our position on the master timeline
+
+        // scroll hint fades as soon as the visitor starts the first act
+        tl.to('.js-hint', { opacity: 0, duration: 0.5 }, 0.2)
+
+        // ── ACT 1: BEDROOM → Who We Are ──
+        t = cleanRoom('bedroom', 0, t)
+        popCard(0, t + 0.1, t + 0.1 + D.msgIn + D.hold)
+        tl.to('.js-sparkles-0', { opacity: 0, duration: 0.3 }, t + 0.1 + D.msgIn + D.hold)
+        t = walkToRoom('bedroom', 'bathroom', t + 0.1 + D.msgIn + D.hold + D.msgOut)
+
+        // ── ACT 2: BATHROOM → How It Works ──
+        t = cleanRoom('bathroom', 1, t)
+        popCard(1, t + 0.1, t + 0.1 + D.msgIn + D.hold)
+        tl.to('.js-sparkles-1', { opacity: 0, duration: 0.3 }, t + 0.1 + D.msgIn + D.hold)
+        t = walkToRoom('bathroom', 'kitchen', t + 0.1 + D.msgIn + D.hold + D.msgOut)
+
+        // ── ACT 3: KITCHEN → How to Pay ──
+        t = cleanRoom('kitchen', 2, t)
+        popCard(2, t + 0.1, t + 0.1 + D.msgIn + D.hold)
+        tl.to('.js-sparkles-2', { opacity: 0, duration: 0.3 }, t + 0.1 + D.msgIn + D.hold)
+        t = walkToRoom('kitchen', 'livingRoom', t + 0.1 + D.msgIn + D.hold + D.msgOut)
+
+        // ── ACT 4: LIVING ROOM → Customer Reviews ──
+        t = cleanRoom('livingRoom', 3, t)
+        popCard(3, t + 0.1, t + 0.1 + D.msgIn + D.hold)
+        tl.to('.js-sparkles-3', { opacity: 0, duration: 0.3 }, t + 0.1 + D.msgIn + D.hold)
+
+        // ── ACT 5: EXTERIOR → Contact (crew done, sunny day) ──
+        const extStart = t + 0.1 + D.msgIn + D.hold + D.msgOut
+        // same tracking-shot pan: living room slides out left, the sunny exterior slides in from the right
+        tl.set('.js-room[data-room="exterior"]', { opacity: 1, xPercent: 100 }, extStart)
+        tl.to('.js-room[data-room="livingRoom"]', { xPercent: -100, duration: D.walk, ease: 'power1.inOut' }, extStart)
+        tl.to('.js-room[data-room="exterior"]', { xPercent: 0, duration: D.walk, ease: 'power1.inOut' }, extStart)
+        tl.set('.js-room[data-room="livingRoom"]', { opacity: 0, xPercent: 0 }, extStart + D.walk)
+        // the crew strolls out onto the lawn and stays put (smooth tween to ~35% — no snap)
+        tl.to('.js-crew', { x: () => (pin.offsetWidth - crew.offsetWidth) * 0.35, duration: D.walk, ease: 'power1.inOut' }, extStart)
+        popCard(4, extStart + D.walk + 0.2) // Contact pops in and stays — no exit tween
       })
-    }, sceneRef) // ← scope
+    }, sceneRef)
 
-    return () => ctx.revert() // undo every animation, pin, and inline style this effect created
+    return () => ctx.revert()
   }, [])
 
   // ─── RENDER HELPERS (beat bodies, reused by BOTH desktop overlay and mobile stack) ───
-  // How It Works — the three numbered steps
   const HowItWorksBody = () => (
     <ol className="space-y-3">
       {[
@@ -101,7 +169,6 @@ export default function CinematicLanding({ t }) {
         { n: '3', title: t.step3Title, desc: t.step3Desc },
       ].map((s) => (
         <li key={s.n} className="flex gap-3">
-          {/* small green step number */}
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">{s.n}</span>
           <span><span className="font-semibold text-ink">{s.title}</span> — {s.desc}</span>
         </li>
@@ -109,7 +176,6 @@ export default function CinematicLanding({ t }) {
     </ol>
   )
 
-  // How to Pay — the three accepted methods plus the "card payments coming soon" note
   const HowToPayBody = () => (
     <div className="space-y-3">
       {[
@@ -126,9 +192,6 @@ export default function CinematicLanding({ t }) {
     </div>
   )
 
-  // Customer Reviews — show the first three REAL quotes (full list is in the QuotesSection below).
-  // The quotes are long, so we clamp each to 4 lines so all three fit the small popup card; the
-  // text is never edited — the complete, untrimmed quote is shown in the dedicated section.
   const ReviewsBody = () => (
     <div className="space-y-3">
       {clientQuotes.slice(0, 3).map((r) => (
@@ -141,23 +204,14 @@ export default function CinematicLanding({ t }) {
     </div>
   )
 
-  // Contact — phone, email, service area, and the booking call-to-action
   const ContactBody = () => (
     <div className="space-y-2">
-      <p className="text-lg text-ink">📞 (555) 555-5555</p>
-      <p className="text-lg text-ink">✉️ hello@yanettescleaning.com</p>
+      <p className="text-lg text-ink">📞 (510) 830-8437</p>
+      <p className="text-lg text-ink">✉️ yanettecleaningservice@gmail.com</p>
       <p className="text-sm text-muted">{t.serviceArea}</p>
-      {/* booking CTA — placeholder tel link until Yanette confirms her real number */}
-      <a
-        href="tel:+15555555555"
-        className="mt-3 inline-block rounded-full bg-brand px-7 py-3 font-semibold text-white transition-transform duration-200 ease-out hover:scale-[1.03] focus-visible:scale-[1.03] focus-visible:outline-none active:scale-95"
-      >
-        {t.bookCleaning}
-      </a>
     </div>
   )
 
-  // the five beats in order — title + body — so desktop and mobile stay perfectly in sync
   const beats = [
     { key: 'who', title: t.whoWeAreTitle, body: <p className="text-base leading-relaxed">{t.whoWeAreDesc}</p> },
     { key: 'how', title: t.howItWorksTitle, body: <HowItWorksBody /> },
@@ -170,24 +224,33 @@ export default function CinematicLanding({ t }) {
   return (
     <>
       {/* ══════════ DESKTOP CINEMATIC (wide screens, motion allowed) ══════════ */}
-      {/* hidden on mobile; also hidden when the user prefers reduced motion (they get the calm layout below) */}
       <section ref={sceneRef} className={reduced ? 'hidden' : 'hidden md:block'} aria-label={t.sceneAriaLabel}>
-        {/* this element is what GSAP pins on screen for the whole 4500px of scrolling */}
         <div className="js-pin relative h-screen w-full overflow-hidden bg-card">
-          {/* layer 0 — the kitchen, starting fully messy (--dirty 0%) */}
-          <KitchenScene dirty="0%" />
+          {/* ── ROOM LAYERS (bedroom → bathroom → kitchen → living room → exterior) ── */}
+          {ROOM_ORDER.map((room) => (
+            <div key={room} className="js-room absolute inset-0 z-0" data-room={room}>
+              <RoomScene room={room} dirty="0%" messyClassName={`js-messy js-messy-${room}`} />
+            </div>
+          ))}
 
-          {/* layer 10 — sparkles, hidden until the end */}
-          <div className="js-sparkles absolute inset-0 z-10">
-            <Sparkles />
+          {/* ── SPARKLE BURSTS (one per interior room act) ── */}
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className={`js-sparkles js-sparkles-${i} absolute inset-0 z-10 opacity-0`}>
+              <Sparkles />
+            </div>
+          ))}
+
+          {/* ── SMOKE OVERLAY (between acts) ── */}
+          <div className="absolute inset-0 z-[15]">
+            <SmokeOverlay />
           </div>
 
-          {/* layer 20 — the crew, parked at the left, walks right as you scroll */}
+          {/* ── CREW (walks left→right between rooms) ── */}
           <div className="js-crew absolute bottom-[4%] left-0 z-20 h-[34vh] w-[230px]">
             <Crew />
           </div>
 
-          {/* layer 30 — the five beats, each centered and stacked; only one is visible at a time */}
+          {/* ── MESSAGE CARDS (one visible at a time) ── */}
           {beats.map((b) => (
             <div key={b.key} className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center px-6">
               <div className="js-popup pointer-events-auto w-full max-w-xl">
@@ -196,7 +259,7 @@ export default function CinematicLanding({ t }) {
             </div>
           ))}
 
-          {/* the gentle scroll hint at the bottom — fades out the moment cleaning begins */}
+          {/* ── SCROLL HINT ── */}
           <div className="js-hint absolute bottom-6 left-1/2 z-30 -translate-x-1/2 text-center text-sm font-semibold text-muted">
             <p>{t.scrollHint}</p>
             <p className="mt-1 animate-bounce text-brand">↓</p>
@@ -204,18 +267,13 @@ export default function CinematicLanding({ t }) {
         </div>
       </section>
 
-      {/* ══════════ MOBILE / REDUCED-MOTION FALLBACK (calm, already-clean, stacked) ══════════ */}
+      {/* ══════════ MOBILE / REDUCED-MOTION FALLBACK ══════════ */}
       <section className={reduced ? 'block' : 'md:hidden'} aria-label={t.sceneAriaLabel}>
-        {/* a clean kitchen hero with the team finished and a few sparkles */}
         <div className="relative h-[58vh] w-full overflow-hidden bg-card">
-          {/* dirty="100%" means the mess is fully clipped away — the kitchen is spotless */}
-          <KitchenScene dirty="100%" />
-          <Sparkles />
-          {/* crew standing finished on the right, ready to leave */}
-          <div className="absolute bottom-[4%] right-3 h-[26vh] w-[120px]">
+          <RoomScene room="exterior" />
+          <div className="absolute bottom-[4%] left-1/2 h-[26vh] w-[120px] -translate-x-1/2">
             <Crew />
           </div>
-          {/* Who We Are intro sits over the hero */}
           <div className="absolute inset-x-0 bottom-4 flex justify-center px-4">
             <div className="w-full max-w-md">
               <PopupCard title={beats[0].title}>{beats[0].body}</PopupCard>
@@ -223,7 +281,6 @@ export default function CinematicLanding({ t }) {
           </div>
         </div>
 
-        {/* the remaining beats stacked normally for easy reading on a phone */}
         <div className="space-y-6 px-5 py-10">
           {beats.slice(1).map((b) => (
             <PopupCard key={b.key} title={b.title}>{b.body}</PopupCard>

@@ -1,6 +1,6 @@
 'use client' // tells Next.js this component runs in the browser, not on the server
 
-// Crew.js — the team of women who clean the kitchen as the visitor scrolls.
+// Crew.js — the team of women who clean each room as the visitor scrolls.
 // This component only draws the artwork. Its position on screen (moving left→right)
 // is controlled by the parent CinematicLanding via the wrapping .js-crew element.
 // Each figure gets a gentle "scrubbing" bob via the .crew-bob CSS class (keyframes in globals.css).
@@ -9,9 +9,14 @@
 // x = horizontal offset inside the SVG; tool = which cleaning tool she holds;
 // skin / hair / delay let each figure look a little different and bob out of sync.
 function Woman({ x, tool, skin, hair, delay }) {
+  const pivot = `${x + 30}px 250px` // feet of this figure — pivot point for bob + hover jump
+
   return (
-    // the bob animation is applied per-figure; transformBox keeps the rotate/scale centered on the figure
-    <g className="crew-bob" style={{ animationDelay: delay, transformOrigin: `${x + 30}px 250px` }}>
+    // outer group: endless scrubbing bob; inner group: one-time hop when the visitor hovers
+    <g className="crew-bob" style={{ animationDelay: delay, transformOrigin: pivot }}>
+      <g className="crew-hover" style={{ transformOrigin: pivot }}>
+      {/* invisible pad — makes each woman easier to hover/tap without aiming at thin limbs */}
+      <rect x={x - 8} y="100" width="76" height="200" fill="transparent" aria-hidden="true" />
       {/* legs */}
       <rect x={x + 18} y="250" width="12" height="46" rx="6" fill="#3A4250" />
       <rect x={x + 36} y="250" width="12" height="46" rx="6" fill="#2F3845" />
@@ -52,6 +57,7 @@ function Woman({ x, tool, skin, hair, delay }) {
         // a folded wiping cloth in her hand
         <rect x={x - 12} y="206" width="26" height="18" rx="4" fill="#FCD34D" transform={`rotate(-10 ${x + 1} 215)`} />
       )}
+      </g>
     </g>
   )
 }
