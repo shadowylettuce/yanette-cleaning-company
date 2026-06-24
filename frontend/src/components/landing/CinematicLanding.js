@@ -12,6 +12,7 @@ import KitchenScene from './KitchenScene'           // the messy/clean kitchen i
 import Crew from './Crew'                            // the team of women who do the cleaning
 import Sparkles from './Sparkles'                    // the end-of-scroll twinkle field
 import PopupCard from './PopupCard'                  // the reusable frosted card for each beat
+import { clientQuotes } from '@/lib/clientQuotes'    // Yanette's real client reviews (verbatim) — full list lives in QuotesSection
 
 gsap.registerPlugin(ScrollTrigger) // turn the ScrollTrigger plugin on (safe to call more than once)
 
@@ -125,13 +126,15 @@ export default function CinematicLanding({ t }) {
     </div>
   )
 
-  // Customer Reviews — show the first three quotes from the translation list
+  // Customer Reviews — show the first three REAL quotes (full list is in the QuotesSection below).
+  // The quotes are long, so we clamp each to 4 lines so all three fit the small popup card; the
+  // text is never edited — the complete, untrimmed quote is shown in the dedicated section.
   const ReviewsBody = () => (
     <div className="space-y-3">
-      {t.testimonialsList.slice(0, 3).map((r) => (
+      {clientQuotes.slice(0, 3).map((r) => (
         <figure key={r.name} className="rounded-2xl border border-line bg-card px-4 py-3">
           <div className="text-accent">★★★★★</div>
-          <blockquote className="mt-1 text-sm italic">&ldquo;{r.quote}&rdquo;</blockquote>
+          <blockquote className="mt-1 line-clamp-4 text-sm italic">&ldquo;{r.quote}&rdquo;</blockquote>
           <figcaption className="mt-1 text-xs font-semibold text-muted">{r.name}</figcaption>
         </figure>
       ))}

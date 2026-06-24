@@ -39,7 +39,7 @@ export const translations = {
     errorGeneric: 'Something went wrong. Please try again.',
 
     // ── landing page ──
-    companyName: "Yanette's House Cleaning Company",
+    companyName: "Yanette's Cleaning Service",
     tagline: 'A spotless home, cared for like our own.',
     bookCleaning: 'Book a Cleaning',
     logIn: 'Log In',
@@ -52,11 +52,11 @@ export const translations = {
     serviceMoveDesc: 'A complete reset so your old or new home is move-ready.',
     howItWorksTitle: 'How It Works',
     step1Title: 'Book Online',
-    step1Desc: 'Call, email, or request a cleaning — we will find a time that works for you.',
+    step1Desc: 'Call, email, or request a cleaning and we will find a time that works for you.',
     step2Title: 'We Show Up',
     step2Desc: 'Our friendly, trusted team arrives on time with everything needed.',
     step3Title: 'Enjoy a Clean Home',
-    step3Desc: 'Walk into a fresh, spotless home — every single time.',
+    step3Desc: 'Walk into a fresh, spotless home every time.',
     whyUsTitle: 'Why Choose Us',
     whyYears: 'Years of Experience',
     whyYearsDesc: 'Trusted by Bay Area families for years of reliable service.',
@@ -84,14 +84,14 @@ export const translations = {
 
     // ── cinematic landing: "Who We Are" intro panel (first beat, over the messy kitchen) ──
     whoWeAreTitle: 'Who We Are',
-    whoWeAreDesc: "We are Yanette's House Cleaning Company — a small Bay Area team that treats every home like our own. Scroll down and watch us get to work.",
+    whoWeAreDesc: "We are Yanette's Cleaning Service — a small Bay Area team who's been in service for 15 years. Scroll to watch us get to work.",
 
     // ── cinematic landing: "How to Pay" beat (Cash / Zelle / Venmo) ──
     howToPayTitle: 'How to Pay',
     payCash: 'Cash',
     payCashDesc: 'Hand cash to your cleaning team or to Yanette on the day of service.',
     payZelle: 'Zelle',
-    payZelleDesc: 'Send via Zelle to our business phone number — quick and free.',
+    payZelleDesc: 'Send via Zelle to our business phone number.',
     payVenmo: 'Venmo',
     payVenmoDesc: 'Send via Venmo to our business account before or after the clean.',
     payCardSoon: 'Online card payments coming soon.',

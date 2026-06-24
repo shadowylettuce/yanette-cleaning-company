@@ -1,11 +1,12 @@
 'use client' // tells Next.js this component runs in the browser, not on the server
 
 // page.js — the PUBLIC landing page that markets Yanette's business to potential new clients
-// Sections in order: Nav → Hero → Services → How It Works → Why Choose Us → Testimonials → Contact
+// Sections in order: Nav → Cinematic scroll-to-clean experience → Client Quotes
 
 import { useState } from 'react'                   // React tool for remembering values between renders
 import { translations } from '@/lib/translations'  // all UI text in English and Spanish
 import CinematicLanding from '@/components/landing/CinematicLanding' // the animated scroll-to-clean kitchen experience
+import QuotesSection from '@/components/landing/QuotesSection'       // real client testimonials shown below the animation
 
 export default function LandingPage() {
   // ─── STATE ───
@@ -40,6 +41,11 @@ export default function LandingPage() {
           the calm mobile / reduced-motion fallback. All copy still comes from translations. */}
       <CinematicLanding t={t} lang={lang} />
       {/* ── END CINEMATIC SCROLL-TO-CLEAN EXPERIENCE ── */}
+
+      {/* ── CLIENT QUOTES ── */}
+      {/* a dedicated, easy-to-read band of Yanette's real client reviews, in full */}
+      <QuotesSection t={t} />
+      {/* ── END CLIENT QUOTES ── */}
 
     </main>
   )
