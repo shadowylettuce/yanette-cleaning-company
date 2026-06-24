@@ -125,6 +125,45 @@ Warning/New:  #FCD34D  — yellow, highlights new clients on the calendar
 
 ---
 
+## Designing from Reference
+
+If Carlos pastes a screenshot or URL of a site he likes, treat it as a reference:
+- Match the layout, spacing, typography, and color **exactly**
+- Swap in Yanette's real content (name, colors, copy) — do not keep the reference's brand
+- Do not "improve" or add to the design — match it first, then Carlos will direct changes
+- After building, take a screenshot, compare visually against the reference, fix every visible mismatch, screenshot again
+- Do at least **2 comparison rounds** — stop only when no visible differences remain or Carlos says to stop
+- When comparing, be specific: *"heading is 32px but reference shows ~24px"*, *"card gap is 16px but should be 24px"*
+- Check: spacing/padding, font size/weight/line-height, colors (exact hex), alignment, border-radius, shadows, image sizing
+
+---
+
+## Screenshot Workflow
+
+Use this workflow any time you need to visually verify a page looks correct. All commands below run from the `frontend/` directory.
+
+**Start the dev server first:**
+```bash
+npm run dev   # starts at http://localhost:3000
+```
+If the server is already running, do not start a second instance.
+
+**Take a screenshot:**
+```bash
+node screenshot.mjs http://localhost:3000
+# optional label: node screenshot.mjs http://localhost:3000 hero-section
+# specific route: node screenshot.mjs http://localhost:3000/dashboard calendar-view
+```
+Screenshots save automatically to `frontend/temporary-screenshots/screenshot-N.png` (auto-incremented, never overwritten).
+
+**Read the screenshot:**
+After saving, read the PNG file — Cursor can see and analyze images directly.
+Compare against the reference or design intent, list specific differences, fix them, screenshot again.
+
+**The loop:** build → screenshot → compare → fix → screenshot → compare → … until it matches or Carlos says stop.
+
+---
+
 ## Getting business_id — Do It This Way Every Time
 
 ```js
